@@ -32,6 +32,12 @@ const player = {
     height: 60,
     speed: 60,
 }
+let bomb = {
+    x: 700,
+    y: 700,
+    width: 30,
+    height: 50,
+}
 
 function drawWalls(wallPositions) {
     for (let i = 0; i < wallPositions.length; i++) {
@@ -103,8 +109,17 @@ function checkCollisionsTempWall(player, tempWalls) {
     return false;
 }
 function drawPlayer() {
-ctx.fillStyle = "blue";
-ctx.fillRect(player.x, player.y, player.width, player.height);
+    ctx.fillStyle = "blue";
+    ctx.fillRect(player.x, player.y, player.width, player.height);
+}
+
+function drawBomb() {
+    ctx.fillStyle = "black";
+    ctx.fillRect(bomb.x, bomb.y, bomb.width, bomb.height);
+}
+function placeBomb(x, y) {
+    bomb.x = x;
+    bomb.y = y;
 }
 
 function clearCanvas() {
@@ -116,6 +131,7 @@ function update(){
     drawWalls(wallPositions)
     drawTempWalls(tempWallPositions)
     drawPlayer();
+    drawBomb();
     requestAnimationFrame(update);
 }
 
@@ -124,6 +140,9 @@ function getUserKeyboardInput(event) {
     const originalY = player.y;
 
     switch (event.key) {
+        case "z":
+            placeBomb(originalX, originalY);
+            return;
         case "ArrowUp":
             if (player.y - player.height < 0) {
                 return

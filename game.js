@@ -34,8 +34,8 @@ const player = {
 }
 
 function drawWalls(wallPositions) {
-    for (let i = 0; i <= 3; i++) {
-        for (let j = 0; j <= 3; j++) {
+    for (let i = 0; i < wallPositions.length; i++) {
+        for (let j = 0; j < wallPositions.length; j++) {
             const wallX = wallPositions[i][j]
             const wallY = wallPositions[j][i]
             ctx.fillStyle = "red";
@@ -66,10 +66,10 @@ function isColliding(rect1, rect2) {
 }
 
 function checkCollisionsPermaWall(player, walls) {
-    for (let i = 0; i < walls.length; i++) {
-        for (let j = 0; j < walls[i].length; j++) {
-            const wallX = walls[i][j];
-            const wallY = (walls[j] && walls[j][i] !== undefined) ? walls[j][i] : 0; 
+    for (let i = 0; i < wallPositions.length; i++) {
+        for (let j = 0; j < wallPositions.length; j++) {
+            const wallX = wallPositions[i][j]
+            const wallY = wallPositions[j][i]
             const wallRect = {
                 x: wallX,
                 y: wallY,
@@ -83,7 +83,25 @@ function checkCollisionsPermaWall(player, walls) {
     }
     return false;
 }
-
+function checkCollisionsTempWall(player, tempWalls) {
+    for (let i = 0; i < tempWallPositions.length; i++) {
+        const row = tempWallPositions[i];
+        for (let j = 0; j < row.length; j++) {
+            const wallX = row[j];
+            const wallY = i * wall.height;
+            const tempWallRect = {
+                x: wallX,
+                y: wallY,
+                width: wall.width,
+                height: wall.height
+            };
+            if (isColliding(player, tempWallRect)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
 function drawPlayer() {
 ctx.fillStyle = "blue";
 ctx.fillRect(player.x, player.y, player.width, player.height);
@@ -140,8 +158,10 @@ function getUserKeyboardInput(event) {
        if (checkCollisionsPermaWall(player, wallPositions)) {
         player.x = originalX;
         player.y = originalY;
-
-    }
+        } else if (checkCollisionsTempWall(player, tempWallPositions)) {
+            player.x = originalX;
+            player.y =originalY;
+        }
 };
 
 document.addEventListener('keydown', getUserKeyboardInput);
